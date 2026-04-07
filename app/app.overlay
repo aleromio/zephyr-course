@@ -1,0 +1,18 @@
+/ {
+	aliases {
+		pwm-led0 = &pwm_led_verde;
+	};
+
+	pwm_leds {
+		compatible = "pwm-leds";
+		pwm_led_verde: pwm_led_verde {
+			pwms = <&pwm2 1 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
+		};
+	};
+};
+
+&pwm2 {
+	status = "okay";
+	pinctrl-0 = <&tim2_ch1_pa5>;
+	pinctrl-names = "default";
+};
