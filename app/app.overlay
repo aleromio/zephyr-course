@@ -1,18 +1,5 @@
 / {
-	aliases {
-		pwm-led0 = &pwm_led_verde;
+    aliases {
+		app-led= &led2;  // used with LED 3 (0-3) of the nrf52840dk or nrf54l15dk noards;
 	};
-
-	pwm_leds {
-		compatible = "pwm-leds";
-		pwm_led_verde: pwm_led_verde {
-			pwms = <&pwm2 1 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
-		};
-	};
-};
-
-&pwm2 {
-	status = "okay";
-	pinctrl-0 = <&tim2_ch1_pa5>;
-	pinctrl-names = "default";
 };

@@ -1,69 +1,11 @@
 
+config APP_HEARTBEAT_PERIOD_MS
+  int "Heartbeat Delay (100-2000)"
+  default 500 
+  range 100 2000
+  help
+    Hearbeat LED delay configuration
 
-menuconfig LED_SUBSYSTEM
-  bool "LED Subsystem"
-
-if LED_SUBSYSTEM
-
-    choice 
-        prompt "LED blink sleep time"
-        default LED_BLINK_SLEEP_1000MS
-
-    config LED_BLINK_SLEEP_250MS
-        bool "250ms (Super Fast)"
-
-    config LED_BLINK_SLEEP_500MS
-        bool "500ms (Fast)"
-
-    config LED_BLINK_SLEEP_1000MS
-        bool "1s (Medium)"
-
-    config LED_BLINK_SLEEP_2000MS
-        bool "2s (Slow)"
-
-    endchoice
-
-    config LED_SLEEP_TIME
-        int
-        default 250 if LED_BLINK_SLEEP_250MS
-        default 500 if LED_BLINK_SLEEP_500MS
-        default 1000 if LED_BLINK_SLEEP_1000MS
-        default 2000 if LED_BLINK_SLEEP_2000MS
-        default 0
-
-    menuconfig ADVANCED_LED_SETTINGS
-      bool "Advanced LED Settings"
-
-        config LED_BRIGHTNESS
-        int "LED brightness (0-100)"
-        default 100 
-        range 0 100
-        depends on ADVANCED_LED_SETTINGS
-        help
-          Brillo maximo del LED para el PWM
-
-        config LED_FADE_DURATION
-        int "LED fade duration (ms)"
-        default 500 
-        range 0 5000
-        depends on ADVANCED_LED_SETTINGS
-        help
-          Duty cycle for PWM 
-
-    menu "Expert settings"
-        visible if ADVANCED_LED_SETTINGS
-        
-        config ENABLE_LED_DEBUGGING
-          bool "Enable LED debugging"
-          default n
-
-        config CUSTOM_BLINK_PATTERN
-          bool "Custom blink pattern"
-          default n
-
-    endmenu
-
-endif # LED_SUBSYSTEM
 
 menu "Zephyr Configuration"
 

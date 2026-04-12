@@ -1,0 +1,187 @@
+[1mdiff --git a/app/src/main.cpp b/app/src/main.cpp[m
+[1mindex 1a7f8fa..6904aba 100644[m
+[1m--- a/app/src/main.cpp[m
+[1m+++ b/app/src/main.cpp[m
+[36m@@ -5,157 +5,69 @@[m
+ [m
+ //#define SLEEP_TIME_MS 200[m
+ [m
+[31m-#ifdef CONFIG_ADVANCED_LED_SETTINGS  // Advanced settings for PWM LED.[m
+[31m-static const struct pwm_dt_spec led_pwm = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led0));[m
+[31m-[m
+[31m-/** @brief States for led_pwm FSM. */[m
+[31m-typedef enum {[m
+[31m-    LED_PWM_CHECK_CUSTOM_BLINK, [m
+[31m-    LED_PWM_NORMAL_BLINK_INCREASE,[m
+[31m-    LED_PWM_NORMAL_BLINK_DECREASE,[m
+[31m-    LED_PWM_CUSTOM_BLINK_INCREASE,[m
+[31m-    LED_PWM_CUSTOM_BLINK_DECREASE,[m
+[31m-    LED_PWM_CUSTOM_BLINK_DELAY   // El prefijo común (LED_STATE_) ayuda a evitar choques[m
+[31m-} led_pwm_state_t;         // Nombre del tipo en snake_case y suele terminar en _t[m
+[31m-[m
+[31m-led_pwm_state_t led_pwm_state = LED_PWM_CHECK_CUSTOM_BLINK;[m
+[31m-uint32_t step_time_ms = 20; [m
+[31m-uint32_t total_steps = CONFIG_LED_FADE_DURATION / step_time_ms;[m
+[31m-uint32_t period = led_pwm.period;[m
+[31m-uint32_t configured_brightness = (period * CONFIG_LED_BRIGHTNESS) / 100;[m
+[31m-uint32_t step = (total_steps > 0) ? configured_brightness / total_steps : 0;[m
+[31m-uint32_t actual_brightness = configured_brightness;[m
+[31m-[m
+[31m-#else[m
+ /* The devicetree node identifier for the "led0" alias. */[m
+ #define LED_NODE DT_ALIAS(led0)[m
+ [m
+ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED_NODE, gpios);[m
+[31m-[m
+[31m-#endif // CONFIG_ADVANCED_LED_SETTINGS[m
+[31m-[m
+[32m+[m[32mstatic const struct pwm_dt_spec led_pwm = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led0));[m
+ [m
+ LOG_MODULE_REGISTER(main, LOG_LEVEL_INF);[m
+ [m
+[31m-void led_pwm_tick(void);[m
+ [m
+ int main(void)[m
+ {[m
+[31m-#ifdef CONFIG_ADVANCED_LED_SETTINGS  // Advanced settings for PWM LED.[m
+[31m-    if (!pwm_is_ready_dt(&led_pwm)) return 0;[m
+[31m-    [m
+[31m-    while(1){[m
+[31m-        led_pwm_tick();[m
+[31m-        k_msleep(step_time_ms);[m
+[31m-    }[m
+[31m-#else    // No advanced settings so normal led blinking.[m
+[31m-    bool led_state = true;[m
+[31m-[m
+[31m-    if (!gpio_is_ready_dt(&led)) return 0;[m
+[31m-[m
+[31m-    if (gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE) < 0) return 0;[m
+[31m-[m
+[31m-    while (1) {[m
+[31m-        if (gpio_pin_toggle_dt(&led) < 0) return 0;[m
+[31m-[m
+[31m-        led_state = !led_state;[m
+[31m-        LOG_INF("LED state: %s", led_state ? "ON" : "OFF");[m
+[31m-        k_msleep(CONFIG_LED_SLEEP_TIME);[m
+[31m-    }[m
+[31m-#endif[m
+[31m-[m
+[31m-    return 0;[m
+[31m-}[m
+[31m-[m
+[31m-#ifdef CONFIG_ADVANCED_LED_SETTINGS  // Advanced settings for PWM LED.[m
+[31m-/**[m
+[31m- * @brief FSM for led PWM. Normal of cutsom blink deppending on CONFIG_ADVANCED_LED_SETTINGS[m
+[31m- */[m
+[31m-void led_pwm_tick(void){[m
+[31m-[m
+[31m-    static uint8_t counter = 0;[m
+[32m+[m[32m    bool increasing = true;[m[41m [m
+[32m+[m[32m    uint32_t step_size;[m[41m [m
+ [m
+[31m-    pwm_set_dt(&led_pwm, period, actual_brightness);[m
+[31m-    [m
+[31m-    switch (led_pwm_state){    [m
+[32m+[m[32m    // 1. Decidimos el modo según Kconfig al arrancar[m
+[32m+[m[32m    if (IS_ENABLED(CONFIG_ADVANCED_LED_SETTINGS)) {[m
+         [m
+[31m-    case LED_PWM_CHECK_CUSTOM_BLINK:[m
+[31m-        if(IS_ENABLED(CONFIG_CUSTOM_BLINK_PATTERN)){[m
+[31m-            led_pwm_state = LED_PWM_CUSTOM_BLINK_INCREASE;[m
+[32m+[m[32m        // MODO PWM: NO tocamos nada de GPIO[m
+[32m+[m[32m        if (!pwm_is_ready_dt(&led_pwm)) return 0;[m
+[32m+[m
+[32m+[m[32m        uint32_t REFRESH_TIME_MS = 20;[m[41m [m
+[32m+[m[32m        uint32_t total_steps = CONFIG_LED_FADE_DURATION / REFRESH_TIME_MS;[m
+[32m+[m[32m        uint32_t period = led_pwm.period;[m
+[32m+[m[32m        uint32_t configured_brightness = (period * CONFIG_LED_BRIGHTNESS) / 100;[m
+[32m+[m[32m        uint32_t step = configured_brightness / total_steps;[m
+[32m+[m[32m        if(step == 0){[m
+[32m+[m[32m            step = 1;[m
+         }[m
+[31m-        else{[m
+[31m-            led_pwm_state = LED_PWM_NORMAL_BLINK_INCREASE;[m
+[31m-        }[m
+[31m-        if (IS_ENABLED(CONFIG_ENABLE_LED_DEBUGGING)) {[m
+[31m-            LOG_INF("DEBUG: Brillo al %d%%, Fade Duration: %u , Total de Pasos: %u, Paso %u" , CONFIG_LED_BRIGHTNESS, CONFIG_LED_FADE_DURATION, total_steps, step);[m
+[31m-        }[m
+[31m-        break;[m
+[31m-[m
+[31m-    case LED_PWM_NORMAL_BLINK_INCREASE:[m
+[31m-        actual_brightness += step;[m
+[31m-        if (actual_brightness >= configured_brightness) {[m
+[31m-            actual_brightness = configured_brightness;[m
+[31m-            led_pwm_state = LED_PWM_NORMAL_BLINK_DECREASE; // Start to decrease  duty cicle.[m
+[31m-            if (IS_ENABLED(CONFIG_ENABLE_LED_DEBUGGING)) {[m
+[31m-                LOG_INF("LED state: MAX");[m
+[31m-            }[m
+[31m-        }[m
+[31m-        break;[m
+[31m-[m
+[31m-    case LED_PWM_NORMAL_BLINK_DECREASE:[m
+[31m-        if (actual_brightness <= step) {[m
+[31m-            actual_brightness = 0;[m
+[31m-            led_pwm_state = LED_PWM_NORMAL_BLINK_INCREASE;  // Start to increase duty cicle.[m
+[31m-            if (IS_ENABLED(CONFIG_ENABLE_LED_DEBUGGING)) {[m
+[31m-                LOG_INF("LED state: OFF");[m
+[31m-            }[m
+[31m-        } else {[m
+[31m-            actual_brightness -= step;[m
+[31m-        }[m
+[31m-        break;[m
+[31m-[m
+[31m-    case LED_PWM_CUSTOM_BLINK_INCREASE:[m
+[31m-        actual_brightness += 2*step;[m
+[31m-        if (actual_brightness >= configured_brightness) {[m
+[31m-            actual_brightness = configured_brightness;[m
+[31m-            led_pwm_state = LED_PWM_CUSTOM_BLINK_DECREASE; // Start to decrease  duty cicle.[m
+[31m-            if (IS_ENABLED(CONFIG_ENABLE_LED_DEBUGGING)) {[m
+[31m-                LOG_INF("LED state: MAX");[m
+[31m-            }[m
+[31m-        }[m
+[31m-        break;[m
+ [m
+[31m-    case LED_PWM_CUSTOM_BLINK_DECREASE:[m
+[31m-        if (actual_brightness <= step) {[m
+[31m-            actual_brightness = 0;[m
+[31m-            counter++;[m
+[31m-            if(counter < 2){[m
+[31m-                led_pwm_state = LED_PWM_CUSTOM_BLINK_INCREASE;  // Start to increase duty cicle.[m
+[31m-            }[m
+[31m-            else{[m
+[31m-                led_pwm_state = LED_PWM_CUSTOM_BLINK_DELAY;  // Delay CONFIG_LED_FADE_DURATION.[m
+[31m-                counter = 0;[m
+[32m+[m[32m        uint32_t actual_brightness = configured_brightness;[m
+[32m+[m
+[32m+[m[32m        while(1){[m
+[32m+[m[32m            pwm_set_dt(&led_pwm, period, actual_brightness);[m
+[32m+[m
+[32m+[m[32m            if (increasing) {[m
+[32m+[m[32m                actual_brightness += step;[m
+[32m+[m[32m                if (actual_brightness >= configured_brightness) {[m
+[32m+[m[32m                    actual_brightness = configured_brightness;[m
+[32m+[m[32m                    increasing = false; // Empezar a bajar[m
+[32m+[m[32m                }[m
+[32m+[m[32m            } else {[m
+[32m+[m[32m                if (actual_brightness <= step) {[m
+[32m+[m[32m                    actual_brightness = 0;[m
+[32m+[m[32m                    increasing = true;  // Empezar a subir[m
+[32m+[m[32m                } else {[m
+[32m+[m[32m                    actual_brightness -= step;[m
+[32m+[m[32m                }[m
+             }[m
+[31m-        if (IS_ENABLED(CONFIG_ENABLE_LED_DEBUGGING)) {[m
+[31m-            LOG_INF("LED state: OFF");[m
+[32m+[m[32m            k_msleep(REFRESH_TIME_MS);[m
+         }[m
+[31m-        } else {[m
+[31m-            actual_brightness -= 2*step;[m
+[31m-        }[m
+[31m-        break;[m
+ [m
+[31m-    case LED_PWM_CUSTOM_BLINK_DELAY:[m
+[31m-        if (IS_ENABLED(CONFIG_ENABLE_LED_DEBUGGING)) {[m
+[31m-            LOG_INF("Custom Blink Delay");[m
+[32m+[m[32m    } else {[m
+[32m+[m[41m        [m
+[32m+[m[32m        // MODO GPIO: So
