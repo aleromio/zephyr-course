@@ -1,0 +1,21 @@
+identifier: board_l5_task1
+name: BOARD L5 TASK1
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+supported:
+  - arduino_gpio
+  - arduino_i2c
+  - arduino_spi
+  - pwm
+  - gpio
+  - dma
+  - spi
+  - i2c
+  - counter
+  - adc
+ram: 96
+flash: 1024
+vendor: st

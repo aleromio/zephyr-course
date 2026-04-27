@@ -1,5 +1,0 @@
-/ {
-    aliases {
-		app-led= &led2;  // used with LED 3 (0-3) of the nrf52840dk or nrf54l15dk noards;
-	};
-};
