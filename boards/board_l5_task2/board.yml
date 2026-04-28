@@ -1,0 +1,6 @@
+board:
+  name: board_l5_task2
+  full_name: Board L5 Task2
+  vendor: Alejandro Romio
+  socs:
+    - name: stm32l476xx

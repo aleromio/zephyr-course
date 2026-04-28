@@ -1,0 +1,2 @@
+config BOARD_BOARD_L5_TASK2
+	select SOC_STM32L476XX
