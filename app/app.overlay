@@ -1,0 +1,6 @@
+/ {
+    ledsensor0: aleromio_ledsensor{
+        compatible = "aleromio,ledsensor";
+        status = "okay";
+    };
+};

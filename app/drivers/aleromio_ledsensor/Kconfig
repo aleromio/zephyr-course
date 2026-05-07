@@ -1,0 +1,3 @@
+config ALEROMIO_LEDSENSOR
+    bool "aleromio led sensor"
+    default y

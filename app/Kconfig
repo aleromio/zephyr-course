@@ -12,3 +12,7 @@ menu "Zephyr Configuration"
   source "Kconfig.zephyr"
 
 endmenu
+
+menu "Sensor Led"
+  rsource "drivers/aleromio_ledsensor/Kconfig"
+endmenu
