@@ -6,5 +6,7 @@ project(my_zephyr_app)
 
 target_sources(app PRIVATE src/main.cpp)
 
+target_sources(app PRIVATE src/shell_commands.c)
+
 add_subdirectory(drivers/aleromio_ledsensor)
 
