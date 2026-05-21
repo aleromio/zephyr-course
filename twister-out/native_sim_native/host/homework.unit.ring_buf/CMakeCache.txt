@@ -345,6 +345,9 @@ NSI_DIR:PATH=/home/aleromio/curso_zephyr/romioworkspace/deps/zephyr/scripts/nati
 //Path to a program.
 OPENOCD:FILEPATH=/usr/bin/openocd
 
+//No help, variable specified on the command line.
+OVERLAY_CONFIG:UNINITIALIZED=/home/aleromio/curso_zephyr/romioworkspace/zephyr-course/twister-out/native_sim_native/host/homework.unit.ring_buf/twister/testsuite_extra.conf
+
 //Path to a program.
 PAHOLE:FILEPATH=PAHOLE-NOTFOUND
 
@@ -364,7 +367,7 @@ SOC_FULL_DIR:PATH=/home/aleromio/curso_zephyr/romioworkspace/deps/zephyr/soc/nat
 TC_NAME:UNINITIALIZED=homework.unit.ring_buf
 
 //No help, variable specified on the command line.
-TC_RUNID:UNINITIALIZED=9961b0f16ad82e2eb0bf07091f65dac5
+TC_RUNID:UNINITIALIZED=89125140ca4725dcc2c4a641f0b64327
 
 //True if toolchain supports newlib
 TOOLCHAIN_HAS_NEWLIB:BOOL=OFF
