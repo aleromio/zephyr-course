@@ -1,0 +1,45 @@
+cmake:
+  application:
+    configuration-dir: '/home/aleromio/curso_zephyr/romioworkspace/zephyr-course/tests/ring_buf'
+    source-dir: '/home/aleromio/curso_zephyr/romioworkspace/zephyr-course/tests/ring_buf'
+  board:
+    name: 'native_sim'
+    path:
+     - '/home/aleromio/curso_zephyr/romioworkspace/deps/zephyr/boards/native/native_sim'
+    qualifiers: 'native'
+    revision: ''
+  devicetree:
+    bindings-dirs:
+     - '/home/aleromio/curso_zephyr/romioworkspace/deps/zephyr/dts/bindings'
+    files:
+     - '/home/aleromio/curso_zephyr/romioworkspace/deps/zephyr/boards/native/native_sim/native_sim.dts'
+    include-dirs:
+     - '/home/aleromio/curso_zephyr/romioworkspace/deps/modules/hal/stm32/dts'
+     - '/home/aleromio/curso_zephyr/romioworkspace/deps/zephyr/include'
+     - '/home/aleromio/curso_zephyr/romioworkspace/deps/zephyr/include/zephyr'
+     - '/home/aleromio/curso_zephyr/romioworkspace/deps/zephyr/dts/common'
+     - '/home/aleromio/curso_zephyr/romioworkspace/deps/zephyr/dts/vendor'
+     - '/home/aleromio/curso_zephyr/romioworkspace/deps/zephyr/dts/rx'
+     - '/home/aleromio/curso_zephyr/romioworkspace/deps/zephyr/dts/x86'
+     - '/home/aleromio/curso_zephyr/romioworkspace/deps/zephyr/dts/xtensa'
+     - '/home/aleromio/curso_zephyr/romioworkspace/deps/zephyr/dts/sparc'
+     - '/home/aleromio/curso_zephyr/romioworkspace/deps/zephyr/dts/riscv'
+     - '/home/aleromio/curso_zephyr/romioworkspace/deps/zephyr/dts/posix'
+     - '/home/aleromio/curso_zephyr/romioworkspace/deps/zephyr/dts/arm64'
+     - '/home/aleromio/curso_zephyr/romioworkspace/deps/zephyr/dts/arm'
+     - '/home/aleromio/curso_zephyr/romioworkspace/deps/zephyr/dts/arc'
+     - '/home/aleromio/curso_zephyr/romioworkspace/deps/zephyr/dts'
+  kconfig:
+    files:
+     - '/home/aleromio/curso_zephyr/romioworkspace/deps/zephyr/boards/native/native_sim/native_sim_defconfig'
+     - '/home/aleromio/curso_zephyr/romioworkspace/zephyr-course/tests/ring_buf/prj.conf'
+     - '/home/aleromio/curso_zephyr/romioworkspace/zephyr-course/twister-out/native_sim_native/host/homework.unit.ring_buf/zephyr/misc/generated/extra_kconfig_options.conf'
+    user-files:
+     - '/home/aleromio/curso_zephyr/romioworkspace/zephyr-course/tests/ring_buf/prj.conf'
+  toolchain:
+    name: 'host'
+    path: ''
+  zephyr:
+    version: '4.2.0'
+    zephyr-base: '/home/aleromio/curso_zephyr/romioworkspace/deps/zephyr'
+version: '0.1.0'
